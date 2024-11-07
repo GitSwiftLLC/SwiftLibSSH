@@ -165,10 +165,6 @@ public extension SwiftLibSSH {
 
         let rc = Darwin.select(sockfd + 1, &readFd, &writeFd, nil, &timeout)
 
-        #if DEBUG
-            print("阻塞:\(rc) dir: \(dir)")
-        #endif
-
         return rc
     }
 
