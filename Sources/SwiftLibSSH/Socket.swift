@@ -2,8 +2,8 @@
 // Copyright (c) 2024 ssh2.app
 // Created by admin@ssh2.app 2024/8/15.
 
-import SwiftCSSH
 import Darwin
+import SwiftCSSH
 import Foundation
 
 public extension SwiftLibSSH {
@@ -164,6 +164,10 @@ public extension SwiftLibSSH {
         }
 
         let rc = Darwin.select(sockfd + 1, &readFd, &writeFd, nil, &timeout)
+
+        #if DEBUG
+            print("阻塞:\(rc) dir: \(dir)")
+        #endif
 
         return rc
     }

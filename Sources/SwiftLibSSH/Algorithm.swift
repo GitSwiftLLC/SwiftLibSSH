@@ -1,11 +1,9 @@
-import SwiftCSSL
 // Algorithm.swift
 // Copyright (c) 2024 ssh2.app
 // Created by admin@ssh2.app 2024/8/19.
 
-import SwiftCSSH
 import Foundation
-
+    import SwiftCSSL
 public enum ShaAlgorithm: String, CaseIterable {
         case md4, md5, md5_sha1, sha1, sha224, sha256, sha384, sha512, sha512_224, sha512_256, sha3_224, sha3_256, sha3_384, sha3_512
         public var EVP: OpaquePointer? {

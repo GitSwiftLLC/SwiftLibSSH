@@ -1,10 +1,11 @@
-import SwiftCSSL
 // Key.swift
 // Copyright (c) 2024 ssh2.app
 // Created by admin@ssh2.app 2024/8/27.
 
-    import SwiftCSSH
-    import Foundation
+
+    import clib
+import Foundation
+    import SwiftCSSL
 
     public extension Crypto {
         /// 生成指定位数的RSA密钥对

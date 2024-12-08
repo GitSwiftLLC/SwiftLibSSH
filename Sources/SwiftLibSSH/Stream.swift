@@ -2,8 +2,8 @@
 // Copyright (c) 2024 ssh2.app
 // Created by admin@ssh2.app 2024/9/3.
 
-import SwiftCSSH
 import Darwin
+import SwiftCSSH
 import Foundation
 
 class FileInputStream: InputStream {

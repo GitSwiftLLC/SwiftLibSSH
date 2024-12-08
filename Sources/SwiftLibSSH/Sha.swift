@@ -1,11 +1,9 @@
-import SwiftCSSL
 // Sha.swift
 // Copyright (c) 2024 ssh2.app
 // Created by admin@ssh2.app 2024/8/18.
 
-import SwiftCSSH
 import Foundation
-
+    import SwiftCSSL
 public extension Crypto {
     /// 使用指定的算法对字符串进行SHA哈希计算
     /// - Parameters:

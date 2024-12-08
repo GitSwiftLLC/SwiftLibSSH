@@ -6,10 +6,10 @@ import PackageDescription
 let package = Package(
     name: "SwiftLibSSH",
     platforms: [
-        .macOS(.v10_15),
-        .iOS(.v13),
-        .tvOS(.v13),
-        .watchOS(.v6),
+        .macOS(.v13),
+        .iOS(.v16),
+        .tvOS(.v16),
+        .watchOS(.v10),
         .visionOS(.v1)
     ],
     products: [
@@ -25,6 +25,20 @@ let package = Package(
             name: "SwiftLibSSH",
             dependencies: [
                 .product(name: "SwiftCSSH", package: "SwiftCSSH"),
+                "clib"
+            ]
+        ),
+        .target(
+            name: "clib",
+            dependencies: [],
+            sources: [
+                "./sshkey.c",
+                "./include/sshkey.h",
+                "./dns.c",
+                "./include/dns.h"
+            ],
+            cSettings: [
+                .headerSearchPath("./include")
             ]
         )
     ]

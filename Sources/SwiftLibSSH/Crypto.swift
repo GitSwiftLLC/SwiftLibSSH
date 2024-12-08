@@ -1,10 +1,9 @@
-import SwiftCSSL
 // Crypto.swift
 // Copyright (c) 2024 ssh2.app
 // Created by admin@ssh2.app 2024/8/18.
 
-import SwiftCSSH
 import Foundation
+    import SwiftCSSL
 
 /// Crypto类提供了一个单例实例，用于表示当前使用的加密库。
 /// 根据编译时标志，它可以是OpenSSL或wolfSSL。
