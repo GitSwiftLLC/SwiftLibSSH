@@ -112,10 +112,10 @@ public extension SwiftLibSSH {
                 }
                 return
             }
-            if !self.isRead {
-                self.cancelSources()
-                return
-            }
+            // if !self.isRead {
+            //     self.cancelSources()
+            //     return
+            // }
         }
         socketSource?.setCancelHandler {
             self.lockRow.lock()
