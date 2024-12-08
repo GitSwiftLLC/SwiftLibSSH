@@ -5,8 +5,11 @@ DEST_DIR="./Sources/SwiftLibSSH"
 
 mkdir -p "$DEST_DIR"
 
-find "$SOURCE_DIR" -type f -exec cp {} "$DEST_DIR" \;
-
+find "$SOURCE_DIR" -type f -name "*.swift" -exec cp {} "$DEST_DIR" \;
+find "./Sources/ssh/CSSH/src" -type f -name "*.c" -exec cp {} "./Sources/clib" \;
+find "./Sources/ssh/CSSH/src" -type f -name "*.h" -exec cp {} "./Sources/clib/include" \;
+find "$SOURCE_DIR" -type f -name "*.c" -exec cp {} "./Sources/clib" \;
+find "$SOURCE_DIR" -type f -name "*.h" -exec cp {} "./Sources/clib/include" \;
 
 replace_content() {
     local search="$1"
@@ -15,17 +18,25 @@ replace_content() {
     
     find "$target_dir" -type f -name "*.swift" -exec sed -i '' "s/$search/$replace/g" {} \;
 }
-
-# replace import CSSH to import SwiftCSSH
-replace_content "import CSSH" "import SwiftCSSH" "$DEST_DIR"
-replace_content "extension SSH" "extension SwiftLibSSH" "$DEST_DIR"
-replace_content "public class SSH" "public class SwiftLibSSH" "$DEST_DIR"
-replace_content "ssh: SSH" "ssh: SwiftLibSSH" "$DEST_DIR"
-replace_content "SSH.getSSH" "SwiftLibSSH.getSSH" "$DEST_DIR"
-replace_content "-> SSH" "-> SwiftLibSSH" "$DEST_DIR"
-replace_content "SSH.self" "SwiftLibSSH.self" "$DEST_DIR"
-
-
+replace_file_content() {
+    local file_path="$1"
+    local search="$2"
+    local replace="$3"
+    
+    if [[ ! -f "$file_path" ]]; then
+        echo "Error: File not found at $file_path"
+        return 1
+    fi
+    
+    sed -i '' "s/$search/$replace/g" "$file_path"
+    
+    if [[ $? -eq 0 ]]; then
+        echo "Replaced '$search' with '$replace' in $file_path"
+    else
+        echo "Error: Failed to replace content in $file_path"
+        return 1
+    fi
+}
 process_openssl() {
     local file="$1"
     local tmp_file=$(mktemp)
@@ -62,15 +73,42 @@ process_openssl() {
     mv "$tmp_file" "$file"
 }
 
+# replace some common content to all files
+replace_content "import CSSH" "import SwiftCSSH" "$DEST_DIR"
+replace_content "extension SSH" "extension SwiftLibSSH" "$DEST_DIR"
+replace_content "public class SSH" "public class SwiftLibSSH" "$DEST_DIR"
+replace_content "ssh: SSH" "ssh: SwiftLibSSH" "$DEST_DIR"
+replace_content "SSH.getSSH" "SwiftLibSSH.getSSH" "$DEST_DIR"
+replace_content "-> SSH" "-> SwiftLibSSH" "$DEST_DIR"
+replace_content "SSH.self" "SwiftLibSSH.self" "$DEST_DIR"
+
 # use openssl only
 find "$DEST_DIR" -type f -name "*.swift" | while read -r file; do
     echo "[INFO] Processing $file..."
     process_openssl "$file" || echo "[ERROR] Failed to process $file"
 done
+replace_content "import OpenSSL" "import SwiftCSSL" "$DEST_DIR"
 
-# add "import SwiftCSSL" to Algorithm.swift, Crypto.swift, HMAC.swift, Key.swift, and Sha.swift
-find "$DEST_DIR" -type f -name "Algorithm.swift" -exec sed -i '' '1s/^/import SwiftCSSL\n/' {} \;
-find "$DEST_DIR" -type f -name "Crypto.swift" -exec sed -i '' '1s/^/import SwiftCSSL\n/' {} \;
-find "$DEST_DIR" -type f -name "HMAC.swift" -exec sed -i '' '1s/^/import SwiftCSSL\n/' {} \;
-find "$DEST_DIR" -type f -name "Key.swift" -exec sed -i '' '1s/^/import SwiftCSSL\n/' {} \;
-find "$DEST_DIR" -type f -name "Sha.swift" -exec sed -i '' '1s/^/import SwiftCSSL\n/' {} \;
+
+
+# Add SwiftCSSH to some files
+replace_file_content "$DEST_DIR/Auth.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/Call.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/Channel.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/Direct.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/File.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/Machine.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/Protocol.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/Session.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/SFTP.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/Shell.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/Socket.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/SSH.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/Stream.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/Types.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
+replace_file_content "$DEST_DIR/String+.swift" "import Foundation" "import clib\nimport Foundation"
+replace_file_content "$DEST_DIR/DNSProvider.swift" "import Network" "import Network\nimport Foundation"
+replace_file_content "$DEST_DIR/DNS.swift" "import Foundation" "import clib\nimport Foundation"
+replace_file_content "$DEST_DIR/Key.swift" "import Foundation" "import clib\nimport Foundation"
+
+replace_file_content "$DEST_DIR/Session.swift" "SSH-2.0-SSH2.app" "SwiftServer.app"
