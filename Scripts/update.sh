@@ -111,4 +111,5 @@ replace_file_content "$DEST_DIR/DNSProvider.swift" "import Network" "import Netw
 replace_file_content "$DEST_DIR/DNS.swift" "import Foundation" "import clib\nimport Foundation"
 replace_file_content "$DEST_DIR/Key.swift" "import Foundation" "import clib\nimport Foundation"
 
-replace_file_content "$DEST_DIR/Session.swift" "SSH-2.0-SSH2.app" "SwiftServer.app"
+replace_file_content "$DEST_DIR/Session.swift" "SSH-2.0-SSH2.app" "SSH-2.0-SwiftServer.app"
+replace_file_content "$DEST_DIR/Session.swift" "SSH-2.0-libssh2_SSH2.app" "SSH-2.0-SwiftServer.app"

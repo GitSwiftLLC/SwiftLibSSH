@@ -35,7 +35,7 @@ public extension SwiftLibSSH {
             self.close(.socket)
         }
         return await call {
-            guard var c = "SwiftServer.app".trimmingCharacters(in: .whitespacesAndNewlines).data(using: .ascii) else {
+            guard var c = "SSH-2.0-SwiftServer.app".trimmingCharacters(in: .whitespacesAndNewlines).data(using: .ascii) else {
                 return false
             }
             c.append([0x0D, 0x0A], count: 2)
@@ -100,7 +100,7 @@ public extension SwiftLibSSH {
 
         libssh2_session_set_timeout(rawSession, timeout * 1000)
 
-        libssh2_session_banner_set(rawSession, banner.hasPrefix("SSH-2") ? banner : "SSH-2.0-libssh2_SSH2.app")
+        libssh2_session_banner_set(rawSession, banner.hasPrefix("SSH-2") ? banner : "SSH-2.0-SwiftServer.app")
         libssh2_session_callback_set2(rawSession, LIBSSH2_CALLBACK_DISCONNECT, unsafeBitCast(disconnect, to: cbGenericType.self))
         libssh2_session_callback_set2(rawSession, LIBSSH2_CALLBACK_SEND, unsafeBitCast(send, to: cbGenericType.self))
         libssh2_session_callback_set2(rawSession, LIBSSH2_CALLBACK_RECV, unsafeBitCast(recv, to: cbGenericType.self))
