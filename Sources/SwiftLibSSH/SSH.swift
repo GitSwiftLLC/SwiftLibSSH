@@ -116,9 +116,6 @@ public class SwiftLibSSH {
         defer {
             closeLock.unlock()
         }
-        #if DEBUG
-            print("关闭", type.rawValue)
-        #endif
         switch type {
         case .sftp:
             closeSftp()
