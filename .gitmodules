@@ -1,3 +1,6 @@
 [submodule "Sources/ssh"]
 	path = Sources/ssh
 	url = https://github.com/sshterm/ssh
+[submodule "Sources/cssh"]
+	path = Sources/cssh
+	url = https://github.com/sshterm/cssh.git

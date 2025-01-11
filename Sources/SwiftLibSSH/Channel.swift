@@ -1,5 +1,5 @@
 // Channel.swift
-// Copyright (c) 2024 ssh2.app
+// Copyright (c) 2025 ssh2.app
 // Created by admin@ssh2.app 2024/8/16.
 
 import SwiftCSSH
@@ -133,7 +133,7 @@ public extension SwiftLibSSH {
                 guard let rawChannel = self.rawChannel else {
                     return -1
                 }
-                return Int(io.Copy(InputStream(data: data), ChannelOutputStream(handle: rawChannel, err: stderr)))
+                return io.Copy(InputStream(data: data), ChannelOutputStream(handle: rawChannel, err: stderr))
             }
             guard code > 0 else {
                 return false
@@ -153,7 +153,7 @@ public extension SwiftLibSSH {
             guard let rawChannel = self.rawChannel else {
                 return -1
             }
-            return Int(io.Copy(output, ChannelInputStream(handle: rawChannel, err: err), self.bufferSize))
+            return io.Copy(output, ChannelInputStream(handle: rawChannel, err: err), self.bufferSize)
         }
         return rc
     }

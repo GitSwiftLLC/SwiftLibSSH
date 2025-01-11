@@ -6,10 +6,8 @@ DEST_DIR="./Sources/SwiftLibSSH"
 mkdir -p "$DEST_DIR"
 
 find "$SOURCE_DIR" -type f -name "*.swift" -exec cp {} "$DEST_DIR" \;
-find "./Sources/ssh/CSSH/src" -type f -name "*.c" -exec cp {} "./Sources/clib" \;
-find "./Sources/ssh/CSSH/src" -type f -name "*.h" -exec cp {} "./Sources/clib/include" \;
-find "$SOURCE_DIR" -type f -name "*.c" -exec cp {} "./Sources/clib" \;
-find "$SOURCE_DIR" -type f -name "*.h" -exec cp {} "./Sources/clib/include" \;
+find "./Sources/cssh/src" -type f -name "*.c" -exec cp {} "./Sources/clib" \;
+find "./Sources/cssh/src" -type f -name "*.h" -exec cp {} "./Sources/clib/include" \;
 
 replace_content() {
     local search="$1"
@@ -74,7 +72,7 @@ process_openssl() {
 }
 
 # replace some common content to all files
-replace_content "import CSSH" "import SwiftCSSH" "$DEST_DIR"
+# replace_content "import CSSH" "import SwiftCSSH" "$DEST_DIR"
 replace_content "extension SSH" "extension SwiftLibSSH" "$DEST_DIR"
 replace_content "public class SSH" "public class SwiftLibSSH" "$DEST_DIR"
 replace_content "ssh: SSH" "ssh: SwiftLibSSH" "$DEST_DIR"
@@ -92,24 +90,24 @@ replace_content "import OpenSSL" "import SwiftCSSL" "$DEST_DIR"
 
 
 # Add SwiftCSSH to some files
-replace_file_content "$DEST_DIR/Auth.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/Call.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/Channel.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/Direct.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/File.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/Machine.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/Protocol.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/Session.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/SFTP.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/Shell.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/Socket.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/SSH.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/Stream.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/Types.swift" "import Foundation" "import SwiftCSSH\nimport Foundation"
-replace_file_content "$DEST_DIR/String+.swift" "import Foundation" "import clib\nimport Foundation"
+replace_file_content "$DEST_DIR/Auth.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/Call.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/Channel.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/Direct.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/File.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/Machine.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/Protocol.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/Session.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/SFTP.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/Shell.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/Socket.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/SSH.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/Stream.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/Types.swift" "import CSSH" "import SwiftCSSH"
+replace_file_content "$DEST_DIR/String+.swift" "import CSSH" "import clib"
 replace_file_content "$DEST_DIR/DNSProvider.swift" "import Network" "import Network\nimport Foundation"
-replace_file_content "$DEST_DIR/DNS.swift" "import Foundation" "import clib\nimport Foundation"
-replace_file_content "$DEST_DIR/Key.swift" "import Foundation" "import clib\nimport Foundation"
+replace_file_content "$DEST_DIR/DNS.swift" "import CSSH" "import clib"
+replace_file_content "$DEST_DIR/Key.swift" "import CSSH" "import clib"
 
 replace_file_content "$DEST_DIR/Session.swift" "SSH-2.0-SSH2.app" "SSH-2.0-SwiftServer.app"
 replace_file_content "$DEST_DIR/Session.swift" "SSH-2.0-libssh2_SSH2.app" "SSH-2.0-SwiftServer.app"
