@@ -151,7 +151,7 @@ public class SwiftLibSSH {
                 close(.channel)
                 close(.sftp)
                 if sockfd.isConnected {
-                    libssh2_session_disconnect_ex(rawSession, SSH_DISCONNECT_BY_APPLICATION, "SSH Term: Disconnect", "")
+                    libssh2_session_disconnect_ex(rawSession, SSH_DISCONNECT_BY_APPLICATION, "SwiftServer: Disconnect", "")
                 }
                 libssh2_session_free(rawSession)
                 libssh2_exit()
