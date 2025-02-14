@@ -108,21 +108,36 @@ public class SwiftLibSSH {
         self.keepalive = keepalive
     }
 
-    private let closeLock = NSLock()
     /// 关闭 SSH 会话和 Socket 连接。
     /// - Parameter type: 关闭类型，可选值为全部、SFTP、通道、Socket 或会话。
     public func close(_ type: CloseType = .session) {
-        closeLock.lock()
-        defer {
-            closeLock.unlock()
-        }
+        #if DEBUG
+            print("关闭", type.rawValue)
+        #endif
         switch type {
         case .sftp:
-            closeSftp()
+            if let rawSFTP {
+                libssh2_sftp_shutdown(rawSFTP)
+                self.rawSFTP = nil
+            }
         case .channel:
-            closeChannel()
+            if let rawChannel {
+                libssh2_channel_set_blocking(rawChannel, 0)
+                lock.lock()
+                defer {
+                    lock.unlock()
+                }
+                libssh2_channel_free(rawChannel)
+                addOperation {
+                    self.channelDelegate?.disconnect(ssh: self)
+                }
+                self.rawChannel = nil
+            }
         case .socket:
-            closeSocket()
+            if sockfd != LIBSSH2_INVALID_SOCKET {
+                shutdown()
+            }
+            sockfd = LIBSSH2_INVALID_SOCKET
         case .session:
             if let rawSession {
                 shutdown(.r)
@@ -133,46 +148,17 @@ public class SwiftLibSSH {
                 }
                 cancelKeepalive()
                 cancelSources()
-                closeChannel()
-                closeSftp()
-                _ = callSSH2 {
-                    libssh2_session_disconnect_ex(rawSession, SSH_DISCONNECT_BY_APPLICATION, "SwiftServer: Disconnect", "")
+                close(.channel)
+                close(.sftp)
+                if sockfd.isConnected {
+                    libssh2_session_disconnect_ex(rawSession, SSH_DISCONNECT_BY_APPLICATION, "SSH Term: Disconnect", "")
                 }
                 libssh2_session_free(rawSession)
                 libssh2_exit()
                 shutdown(.w)
-                closeSocket()
+                close(.socket)
                 self.rawSession = nil
             }
-        }
-    }
-
-    private func closeSocket() {
-        if sockfd != LIBSSH2_INVALID_SOCKET {
-            shutdown()
-        }
-        sockfd = LIBSSH2_INVALID_SOCKET
-    }
-
-    private func closeChannel() {
-        if let rawChannel {
-            libssh2_channel_set_blocking(rawChannel, 0)
-            lock.lock()
-            defer {
-                lock.unlock()
-            }
-            libssh2_channel_free(rawChannel)
-            addOperation {
-                self.channelDelegate?.disconnect(ssh: self)
-            }
-            self.rawChannel = nil
-        }
-    }
-
-    private func closeSftp() {
-        if let rawSFTP {
-            libssh2_sftp_shutdown(rawSFTP)
-            self.rawSFTP = nil
         }
     }
 
