@@ -121,12 +121,12 @@ public class SwiftLibSSH {
                 self.rawSFTP = nil
             }
         case .channel:
+            lock.lock()
+            defer {
+                lock.unlock()
+            }
             if let rawChannel {
                 libssh2_channel_set_blocking(rawChannel, 0)
-                lock.lock()
-                defer {
-                    lock.unlock()
-                }
                 libssh2_channel_free(rawChannel)
                 addOperation {
                     self.channelDelegate?.disconnect(ssh: self)
@@ -139,13 +139,13 @@ public class SwiftLibSSH {
             }
             sockfd = LIBSSH2_INVALID_SOCKET
         case .session:
+            lockRow.lock()
+            defer {
+                lockRow.unlock()
+            }
             if let rawSession {
                 shutdown(.r)
                 job.cancelAllOperations()
-                lockRow.lock()
-                defer {
-                    lockRow.unlock()
-                }
                 cancelKeepalive()
                 cancelSources()
                 close(.channel)
