@@ -127,6 +127,7 @@ public class SwiftLibSSH {
                 defer {
                     lock.unlock()
                 }
+                guard self.rawChannel != nil else { return }
                 libssh2_channel_free(rawChannel)
                 addOperation {
                     self.channelDelegate?.disconnect(ssh: self)
@@ -146,6 +147,7 @@ public class SwiftLibSSH {
                 defer {
                     lockRow.unlock()
                 }
+                guard self.rawSession != nil else { return }
                 cancelKeepalive()
                 cancelSources()
                 close(.channel)
