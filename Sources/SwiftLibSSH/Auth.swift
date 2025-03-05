@@ -166,6 +166,54 @@ public extension SwiftLibSSH {
         }
     }
 
+    func authenticate(_ none: Bool = false, password: String) async -> Bool {
+        guard let rawSession = rawSession else {
+            return false
+        }
+        if none {
+            let list = await userauth()
+            guard list.contains("none") else {
+                return false
+            }
+            return isAuthenticated
+        } else {
+            let list = await userauth()
+            guard list.contains("keyboard-interactive") else {
+                return false
+            }
+            return await call {
+                let code = self.callSSH2 {
+                    libssh2_userauth_keyboard_interactive_ex(rawSession, self.user, self.user.countUInt32) { _, _, _, _, numPrompts, prompts, responses, abstract in
+                        guard let abstract = abstract else {
+                            return
+                        }
+                        guard let ssh: SwiftLibSSH = abstract.load() else {
+                            return
+                        }
+                        for i in 0 ..< Int(numPrompts) {
+                            guard let promptI = prompts?[i], let text = promptI.text else {
+                                continue
+                            }
+
+                            let data = Data(bytes: UnsafeRawPointer(text), count: Int(promptI.length))
+
+                            guard let challenge = String(data: data, encoding: .utf8) else {
+                                continue
+                            }
+
+                            let response = LIBSSH2_USERAUTH_KBDINT_RESPONSE(text: password.pointerCChar, length: password.countUInt32)
+                            responses?[i] = response
+                        }
+                    }
+                }
+                guard code == LIBSSH2_ERROR_NONE else {
+                    return false
+                }
+                return self.isAuthenticated
+            }
+        }
+    }
+
     // 是否认证
     /// 检查当前会话是否已经通过用户认证。
     /// - Returns: 如果用户已经认证则返回true，否则返回false。
