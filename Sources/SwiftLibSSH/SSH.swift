@@ -112,7 +112,7 @@ public class SwiftLibSSH {
     /// - Parameter type: 关闭类型，可选值为全部、SFTP、通道、Socket 或会话。
     public func close(_ type: CloseType = .session) {
         #if DEBUG
-            print("关闭", type.rawValue)
+            // print("关闭", type.rawValue)
         #endif
         switch type {
         case .sftp:
